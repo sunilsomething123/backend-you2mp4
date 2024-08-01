@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify
 import os
 import re
+from urllib.parse import quote  # Update this import
 
 app = Flask(__name__)
 
-YOUTUBE_API_KEY = os.getenv('AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8')
+YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
 
 def is_valid_youtube_url(url):
     youtube_regex = re.compile(
@@ -19,7 +20,7 @@ def convert():
         return jsonify({"success": False, "message": "Invalid URL"}), 400
 
     video_id = video_url.split('v=')[1] if 'v=' in video_url else video_url.split('/')[-1]
-    download_url = f"https://youtube.com/download/{video_id}.mp4"
+    download_url = f"https://youtube.com/download/{quote(video_id)}.mp4"
 
     return jsonify({"success": True, "downloadUrl": download_url, "videoId": video_id})
 
