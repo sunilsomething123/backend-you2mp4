@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import os
 import re
+from werkzeug.utils import quote
 
 app = Flask(__name__)
 
@@ -19,7 +20,7 @@ def convert():
         return jsonify({"success": False, "message": "Invalid URL"}), 400
 
     video_id = video_url.split('v=')[1] if 'v=' in video_url else video_url.split('/')[-1]
-    download_url = f"https://youtube.com/download/{video_id}.mp4"
+    download_url = f"https://youtube.com/download/{quote(video_id)}.mp4"
 
     return jsonify({"success": True, "downloadUrl": download_url, "videoId": video_id})
 
