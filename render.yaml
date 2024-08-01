@@ -9,3 +9,4 @@ services:
     envVars:
       - key: AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8
         sync: false
+    pythonVersion: 3.9
