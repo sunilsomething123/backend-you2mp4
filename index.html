@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube to MP4 Converter</title>
+</head>
+<body>
+    <h1>YouTube to MP4 Converter</h1>
+    <form action="/download" method="post">
+        <input type="text" name="url" placeholder="Enter YouTube URL">
+        <select name="resolution">
+            <option value="720p">720p</option>
+            <option value="1080p">1080p</option>
+            <!-- Add more options as needed -->
+        </select>
+        <button type="submit">Download</button>
+    </form>
+    <div id="progress-bar" style="display:none;">
+        <p>Downloading... Please wait.</p>
+    </div>
+    <script>
+        const form = document.querySelector('form');
+        form.addEventListener('submit', () => {
+            document.getElementById('progress-bar').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
