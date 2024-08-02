@@ -1,10 +1,10 @@
-import os
 import re
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+import time
 import random
+from googleapiclient.discovery import build
+from flask import request, jsonify
 
-def fetch_video_info("AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8"):
+def fetch_video_info(url, api_key):
     youtube = build('youtube', 'v3', developerKey=api_key)
     video_id = extract_video_id(url)
     response = youtube.videos().list(part='snippet,contentDetails', id=video_id).execute()
