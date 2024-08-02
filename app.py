@@ -1,28 +1,59 @@
-from flask import Flask, request, jsonify
 import os
-import re
-from urllib.parse import quote  # Update this import
+from flask import Flask, request, jsonify, render_template
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from utils import fetch_video_info, download_video, RateLimiter, generate_joke
 
 app = Flask(__name__)
 
-YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
+# Load environment variables
+API_KEY = os.getenv('AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8')
+DOWNLOAD_HISTORY = []
 
-def is_valid_youtube_url(url):
-    youtube_regex = re.compile(
-        r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/.+')
-    return youtube_regex.match(url) is not None
+rate_limiter = RateLimiter(max_requests=10000, period=3600)  # 10,000 requests per hour
 
-@app.route('/convert', methods=['POST'])
-def convert():
-    data = request.json
-    video_url = data.get('url')
-    if not video_url or not is_valid_youtube_url(video_url):
-        return jsonify({"success": False, "message": "Invalid URL"}), 400
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-    video_id = video_url.split('v=')[1] if 'v=' in video_url else video_url.split('/')[-1]
-    download_url = f"https://youtube.com/download/{quote(video_id)}.mp4"
+@app.route('/download', methods=['POST'])
+@rate_limiter.limit
+def download():
+    url = request.form['url']
+    try:
+        video_info = fetch_video_info(url, API_KEY)
+        video_id = video_info['id']
+        resolutions = video_info['resolutions']
+        chosen_resolution = request.form.get('resolution', '720p')  # Default to 720p if not specified
+        video_file = download_video(video_id, chosen_resolution)
+        
+        DOWNLOAD_HISTORY.append({
+            'url': url,
+            'resolution': chosen_resolution,
+            'file': video_file
+        })
+        
+        return jsonify({
+            'status': 'success',
+            'file': video_file,
+            'message': generate_joke(success=True)
+        })
+    except HttpError as e:
+        return jsonify({
+            'status': 'error',
+            'message': generate_joke(success=False),
+            'error': str(e)
+        }), 500
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': generate_joke(success=False),
+            'error': str(e)
+        }), 500
 
-    return jsonify({"success": True, "downloadUrl": download_url, "videoId": video_id})
+@app.route('/history', methods=['GET'])
+def history():
+    return jsonify(DOWNLOAD_HISTORY)
 
 if __name__ == '__main__':
     app.run(debug=True)
