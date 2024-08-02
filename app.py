@@ -7,7 +7,7 @@ from utils import fetch_video_info, download_video, RateLimiter, generate_joke
 app = Flask(__name__)
 
 # Load environment variables
-API_KEY = os.getenv('YOUTUBE_API_KEY')
+API_KEY = os.getenv('AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8')
 DOWNLOAD_HISTORY = []
 
 rate_limiter = RateLimiter(max_requests=10000, period=3600)  # 10,000 requests per hour
