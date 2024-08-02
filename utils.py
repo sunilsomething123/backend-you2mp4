@@ -4,7 +4,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import random
 
-def fetch_video_info("AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8'):
+def fetch_video_info("AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8"):
     youtube = build('youtube', 'v3', developerKey=api_key)
     video_id = extract_video_id(url)
     response = youtube.videos().list(part='snippet,contentDetails', id=video_id).execute()
