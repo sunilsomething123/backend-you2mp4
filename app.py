@@ -7,7 +7,7 @@ from utils import fetch_video_info, download_video, RateLimiter, generate_joke
 app = Flask(__name__)
 
 # Load environment variables
-API_KEY = os.getenv('AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8')
+API_KEY = os.getenv('YOUTUBE_API_KEY')
 DOWNLOAD_HISTORY = []
 
 rate_limiter = RateLimiter(max_requests=10000, period=3600)  # 10,000 requests per hour
@@ -21,7 +21,7 @@ def index():
 def download():
     url = request.form['url']
     try:
-        video_info = fetch_video_info(url, API_KEY)
+        video_info = fetch_video_info(AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8)
         video_id = video_info['id']
         resolutions = video_info['resolutions']
         chosen_resolution = request.form.get('resolution', '720p')  # Default to 720p if not specified
