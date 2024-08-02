@@ -1,13 +1,10 @@
-import os
 from flask import Flask, request, jsonify, render_template
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 from utils import fetch_video_info, download_video, RateLimiter, generate_joke
 
 app = Flask(__name__)
 
-# Load environment variables
-API_KEY = os.getenv('AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8')
+# Set API Key directly
+API_KEY = 'AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8'
 DOWNLOAD_HISTORY = []
 
 rate_limiter = RateLimiter(max_requests=10000, period=3600)  # 10,000 requests per hour
@@ -21,7 +18,7 @@ def index():
 def download():
     url = request.form['url']
     try:
-        video_info = fetch_video_info(AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8)
+        video_info = fetch_video_info(url, API_KEY)
         video_id = video_info['id']
         resolutions = video_info['resolutions']
         chosen_resolution = request.form.get('resolution', '720p')  # Default to 720p if not specified
@@ -38,12 +35,6 @@ def download():
             'file': video_file,
             'message': generate_joke(success=True)
         })
-    except HttpError as e:
-        return jsonify({
-            'status': 'error',
-            'message': generate_joke(success=False),
-            'error': str(e)
-        }), 500
     except Exception as e:
         return jsonify({
             'status': 'error',
