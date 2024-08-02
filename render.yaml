@@ -1,12 +1,9 @@
 services:
   - type: web
-    name: youtube-to-mp4-converter
+    name: you2mp4
     env: python
-    region: oregon
-    plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    buildCommand: ""
+    startCommand: gunicorn app:app
     envVars:
-      - key: AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8
-        sync: false
-    pythonVersion: 3.9
+      - key: YOUTUBE_API_KEY
+        value: "AIzaSyBuLDbPhS5QddaZaETco_-MUtngmGSscH8"
